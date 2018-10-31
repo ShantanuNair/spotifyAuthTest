@@ -31,16 +31,44 @@ class App extends Component {
     }
     return hashParams;
   }
+  getNowPlaying(){
+    spotifyApi.getMyCurrentPlaybackState()
+      .then((response) => {
+        this.setState({
+          nowPlaying: { 
+              name: response.item.name, 
+              albumArt: response.item.album.images[0].url
+            }
+        });
+      })
+  }
+  getUserInfo(){
+    spotifyApi.getMe()
+      .then((response) => {
+        this.setState({
+          userID: response.id
+        });
+        
+      })
+  }
   render() {
     return (
       <div className="App">
-        <a href='http://localhost:8888' > Login to Spotify </a>
+        {!this.state.loggedIn && <a href='http://localhost:8888/login' > Login to Spotify </a>}
         <div>
           Now Playing: { this.state.nowPlaying.name }
         </div>
         <div>
+          Hello {this.state.userID}!
           <img src={this.state.nowPlaying.albumArt} style={{ height: 150 }}/>
         </div>
+        { <div>
+          {this.state.loggedIn &&
+          <button onClick={() => this.getNowPlaying()}>
+              {this.getUserInfo()}        </button>}
+          </div>
+        }
+        
       </div>
     );
   }
